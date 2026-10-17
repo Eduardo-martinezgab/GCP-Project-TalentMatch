@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TalentMatch - AI-Powered Recruitment Platform (GCP Test Suite)</title>
+    <!-- Tailwind CSS for modern responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: ['class', '[data-theme="dark"]'],
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        },
+                        darkbg: '#0b0f19',
+                        darkcard: '#111827',
+                        darkborder: '#1f2937'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Phosphor Icons for UI accents -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(100,100,100,0.3);
+            border-radius: 4px;
+        }
+        /* Glassmorphism utility */
+        .glass {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        [data-theme="light"] .glass {
+            background: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-darkbg text-slate-100 min-h-screen flex flex-col transition-colors duration-200" id="appBody">
+
+    <!-- TOP HEADER / NAV BAR -->
+    <header class="sticky top-0 z-40 border-b border-gray-800 glass transition-colors duration-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand Logo & Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/30">
+                    <i class="ph ph-sparkle"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-lg tracking-tight text-slate-900 dark:text-white">TalentMatch</span>
+                        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">GCP Integrated</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Enterprise AI Recruitment Pipeline</p>
+                </div>
+            </div>
+
+            <!-- Role Switcher & Utilities -->
+            <div class="flex items-center gap-4">
+                <!-- Navigation Tabs -->
+                <div class="flex bg-slate-200 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-300 dark:border-slate-700/50">
+                    <button id="navRecruiter" onclick="switchRole('recruiter')" class="flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 bg-blue-600 text-white shadow-sm">
+                        <i class="ph ph-briefcase font-bold"></i> Recruiter Portal
+                    </button>
+                    <button id="navCandidate" onclick="switchRole('candidate')" class="flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
+                        <i class="ph ph-user font-bold"></i> Candidate Portal
+                    </button>
+                </div>
+
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors" title="Toggle Light/Dark Theme">
+                    <i id="themeIcon" class="ph ph-sun text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN WRAPPER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- GCP SERVICES DIAGNOSTIC / STATUS BANNER -->
+        <section class="bg-slate-900/60 dark:bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <i class="ph ph-cloud-check text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                            Google Cloud Architecture Pipeline Ready
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                Active Environment
+                            </span>
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Automated workflow: Cloud Storage &rarr; Cloud Functions &rarr; Document AI &rarr; Vertex AI &rarr; Firestore</p>
+                    </div>
+                </div>
+                <button onclick="toggleGcpDetails()" class="text-xs font-medium text-blue-400 hover:text-blue-300 flex items-center gap-1 self-start md:self-auto">
+                    <span>Inspect GCP Services (12 Integrated)</span>
+                    <i id="gcpChevron" class="ph ph-caret-down"></i>
+                </button>
+            </div>
+
+            <!-- Expandable GCP Services Status Cards -->
+            <div id="gcpServiceGrid" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mt-4 pt-4 border-t border-slate-800/80">
+                <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 text-xs">
+                    <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Cloud Run</div>
+                    <div class="font-medium text-slate-200 mt-0.5 truncate">TalentMatch-App</div>
+                    <div class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Live Host</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 text-xs">
+                    <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Cloud Storage</div>
+                    <div class="font-medium text-slate-200 mt-0.5 truncate">talentmatch-resumes</div>
+                    <div class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Ready</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 text-xs">
+                    <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Firestore</div>
+                    <div class="font-medium text-slate-200 mt-0.5 truncate">talentmatchdb</div>
+                    <div class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Connected</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 text-xs">
+                    <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Document AI</div>
+                    <div class="font-medium text-slate-200 mt-0.5 truncate">Resume Processor</div>
+                    <div class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Parser Active</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 text-xs">
+                    <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Vertex AI</div>
+                    <div class="font-medium text-slate-200 mt-0.5 truncate">Matching Engine</div>
+                    <div class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Model Online</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 text-xs">
+                    <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Cloud Functions</div>
+                    <div class="font-medium text-slate-200 mt-0.5 truncate">Resume Automation</div>
+                    <div class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Event Trigger</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 text-xs">
+                    <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Identity Platform</div>
+                    <div class="font-medium text-slate-200 mt-0.5 truncate">TalentMatch Auth</div>
+                    <div class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> MFA Ready</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 text-xs">
+                    <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Secret Manager</div>
+                    <div class="font-medium text-slate-200 mt-0.5 truncate">TalentMatch Secrets</div>
+                    <div class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Encrypted</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 text-xs">
+                    <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Cloud Monitoring</div>
+                    <div class="font-medium text-slate-200 mt-0.5 truncate">TalentMatch Monitor</div>
+                    <div class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Metrics OK</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 text-xs">
+                    <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Cloud Logging</div>
+                    <div class="font-medium text-slate-200 mt-0.5 truncate">TalentMatch Logs</div>
+                    <div class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Auditing</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 text-xs">
+                    <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Cloud Build</div>
+                    <div class="font-medium text-slate-200 mt-0.5 truncate">TalentMatch Build</div>
+                    <div class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> CI/CD Active</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 text-xs">
+                    <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Artifact Registry</div>
+                    <div class="font-medium text-slate-200 mt-0.5 truncate">TalentMatch Registry</div>
+                    <div class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Image Stored</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== RECRUITER PORTAL VIEW ==================== -->
+        <div id="viewRecruiter" class="space-y-6">
+
+            <!-- Metrics Overview Bar -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400">Active Job Openings</p>
+                        <h4 id="statOpenJobs" class="text-2xl font-bold text-slate-100 mt-1">2</h4>
+                    </div>
+                    <div class="p-3 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20">
+                        <i class="ph ph-briefcase-metal text-2xl"></i>
+                    </div>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400">Total Applicants</p>
+                        <h4 id="statTotalApplicants" class="text-2xl font-bold text-slate-100 mt-1">2</h4>
+                    </div>
+                    <div class="p-3 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
+                        <i class="ph ph-users text-2xl"></i>
+                    </div>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400">Avg Vertex Match Score</p>
+                        <h4 id="statAvgScore" class="text-2xl font-bold text-emerald-400 mt-1">88.5%</h4>
+                    </div>
+                    <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
+                        <i class="ph ph-chart-line-up text-2xl"></i>
+                    </div>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400">Interviews Scheduled</p>
+                        <h4 id="statInterviews" class="text-2xl font-bold text-indigo-400 mt-1">1</h4>
+                    </div>
+                    <div class="p-3 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/20">
+                        <i class="ph ph-calendar-check text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-Column Layout: Create Job & Active Jobs List -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                <!-- Create Job Form -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center gap-2 pb-3 border-b border-slate-800">
+                        <i class="ph ph-plus-circle text-blue-400 text-xl"></i>
+                        <h2 class="font-semibold text-slate-100">Create New Job Opening</h2>
+                    </div>
+
+                    <form id="createJobForm" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Job Title</label>
+                            <input type="text" id="jobTitle" required placeholder="e.g. Senior Cloud Architect" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Department</label>
+                                <input type="text" id="jobDept" required placeholder="Engineering" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Experience</label>
+                                <select id="jobExp" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                                    <option>Entry Level</option>
+                                    <option selected>Mid-Senior Level</option>
+                                    <option>Lead / Staff</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Required Skills (Comma separated)</label>
+                            <input type="text" id="jobSkills" required placeholder="GCP, Docker, Node.js, Kubernetes" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Job Description</label>
+                            <textarea id="jobDesc" rows="3" required placeholder="Key responsibilities and required qualifications..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm rounded-xl transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2">
+                            <i class="ph ph-floppy-disk"></i> Save Job to Firestore
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Active Jobs List -->
+                <div class="lg:col-span-2 bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                        <div class="flex items-center gap-2">
+                            <i class="ph ph-list-bullets text-indigo-400 text-xl"></i>
+                            <h2 class="font-semibold text-slate-100">Active Roles in Firestore (`talentmatchdb`)</h2>
+                        </div>
+                        <span id="activeJobsBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-medium">2 Active</span>
+                    </div>
+
+                    <div id="recruiterJobList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Dynamically Rendered Jobs -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Candidate Applications Dashboard (Vertex AI Matching View) -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-slate-800">
+                    <div>
+                        <h2 class="font-semibold text-slate-100 flex items-center gap-2">
+                            <i class="ph ph-brain text-purple-400 text-xl"></i>
+                            Candidate AI Match Pipeline
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Real-time candidate evaluation powered by Document AI parsing & Vertex AI Vector Scoring</p>
+                    </div>
+
+                    <!-- Search & Filter Controls -->
+                    <div class="flex items-center gap-3">
+                        <div class="relative">
+                            <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-slate-500"></i>
+                            <input type="text" id="candidateSearch" oninput="filterCandidates()" placeholder="Search candidates..." class="pl-9 pr-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-blue-500 w-48 sm:w-64">
+                        </div>
+                        <select id="roleFilter" onchange="filterCandidates()" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+                            <option value="ALL">All Applied Roles</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Candidates Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-950/80 text-slate-400 uppercase font-semibold text-[10px] tracking-wider border-b border-slate-800">
+                            <tr>
+                                <th class="p-3">Candidate</th>
+                                <th class="p-3">Applied Role</th>
+                                <th class="p-3">Document AI Skills</th>
+                                <th class="p-3">Vertex Match Score</th>
+                                <th class="p-3">Pipeline Status</th>
+                                <th class="p-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="candidateTableBody" class="divide-y divide-slate-800/60">
+                            <!-- Dynamically populated candidate rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== CANDIDATE PORTAL VIEW ==================== -->
+        <div id="viewCandidate" class="hidden space-y-6">
+
+            <!-- Candidate Welcome Header -->
+            <div class="bg-gradient-to-r from-blue-900/40 via-indigo-900/30 to-purple-900/20 border border-slate-800 rounded-2xl p-6 relative overflow-hidden">
+                <div class="max-w-2xl space-y-2 relative z-10">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-blue-400">Candidate Career Portal</span>
+                    <h2 class="text-2xl font-bold text-white">Find Your Next Role & Get Instant AI Feedback</h2>
+                    <p class="text-sm text-slate-300">Explore open opportunities. When you submit your resume, our GCP Document AI engine parses your experience and Vertex AI scores your fit instantly.</p>
+                </div>
+            </div>
+
+            <!-- Open Roles Grid -->
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+                        <i class="ph ph-briefcase text-blue-400"></i> Open Positions
+                    </h3>
+                    <span id="candidateOpenRolesCount" class="text-xs text-slate-400">Showing 2 roles</span>
+                </div>
+
+                <div id="candidateJobGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <!-- Dynamically Rendered Job Cards for Candidate -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- APPLY RESUME MODAL -->
+    <div id="applyModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-5 relative">
+            <button onclick="closeApplyModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="ph ph-x text-xl"></i>
+            </button>
+
+            <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl">
+                    <i class="ph ph-file-arrow-up"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-100">Submit Candidate Application</h3>
+                    <p id="modalJobTitle" class="text-xs text-blue-400 font-medium">Applying for Cloud Solutions Architect</p>
+                </div>
+            </div>
+
+            <form id="applyForm" onsubmit="handleResumeSubmit(event)" class="space-y-4">
+                <input type="hidden" id="applyJobId">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Full Name</label>
+                    <input type="text" id="applicantName" required placeholder="e.g. Sarah Jenkins" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Email Address</label>
+                    <input type="email" id="applicantEmail" required placeholder="sarah.j@example.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                </div>
+
+                <!-- Resume File Upload Drag and Drop Box -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Resume Document (Simulated Cloud Storage Upload)</label>
+                    <div class="border-2 border-dashed border-slate-700 hover:border-blue-500 bg-slate-950 rounded-2xl p-5 text-center cursor-pointer transition-colors" onclick="document.getElementById('resumeFile').click()">
+                        <i class="ph ph-cloud-arrow-up text-3xl text-blue-400 mb-2"></i>
+                        <p class="text-xs font-medium text-slate-300">Click to attach resume (PDF/DOCX)</p>
+                        <p id="fileNameDisplay" class="text-[11px] text-slate-500 mt-1">Upload triggers Document AI & Vertex AI scoring</p>
+                        <input type="file" id="resumeFile" class="hidden" required onchange="updateFileName(this)">
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" id="submitBtn" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm rounded-xl transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2">
+                        <span>Upload & Run GCP AI Pipeline</span>
+                        <i class="ph ph-paper-plane-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MATCH SCORE ANALYSIS MODAL (Recruiter Detail View) -->
+    <div id="matchDetailModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-5 relative">
+            <button onclick="closeMatchModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="ph ph-x text-xl"></i>
+            </button>
+
+            <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl">
+                    <i class="ph ph-cpu"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-100">Vertex AI Match Breakdown</h3>
+                    <p id="modalCandidateName" class="text-xs text-purple-400 font-medium">Candidate Evaluation Details</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-xs text-slate-300">
+                <!-- Score Bar -->
+                <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+                    <div>
+                        <span class="text-slate-400 font-medium">Matching Engine Score</span>
+                        <h4 id="modalScoreValue" class="text-3xl font-extrabold text-emerald-400 mt-0.5">92%</h4>
+                    </div>
+                    <div id="modalScoreBadge" class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                        High Match Fit
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-slate-200 mb-1 flex items-center gap-1.5">
+                        <i class="ph ph-file-text text-blue-400"></i> Document AI Extracted Skills
+                    </h4>
+                    <div id="modalExtractedSkills" class="flex flex-wrap gap-1.5 p-3 rounded-xl bg-slate-950 border border-slate-800">
+                        <!-- Tags -->
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-slate-200 mb-1 flex items-center gap-1.5">
+                        <i class="ph ph-sparkle text-amber-400"></i> AI Matching Reasoning
+                    </h4>
+                    <p id="modalReasoning" class="p-3 rounded-xl bg-slate-950 border border-slate-800 leading-relaxed text-slate-400">
+                        Detailed reasoning generated by Vertex AI...
+                    </p>
+                </div>
+            </div>
+
+            <div class="pt-2 flex justify-end">
+                <button onclick="closeMatchModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl font-medium text-xs">
+                    Close Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC & MOCK GCP DATA STORE -->
+    <script>
+        // --- IN-MEMORY FIRESTORE SIMULATED DATABASE ---
+        let jobsStore = [
+            {
+                id: 'job_01',
+                title: 'Senior Cloud Solutions Architect',
+                department: 'Engineering',
+                experience: 'Mid-Senior Level',
+                skills: ['GCP', 'Kubernetes', 'Terraform', 'Node.js', 'Architecture'],
+                description: 'Design and implement GCP cloud infrastructures with high availability and automated CI/CD pipelines.'
+            },
+            {
+                id: 'job_02',
+                title: 'Full Stack Engineer (GCP & Node)',
+                department: 'Product Development',
+                experience: 'Mid-Senior Level',
+                skills: ['Node.js', 'Express', 'React', 'Firestore', 'Tailwind'],
+                description: 'Build scalable web applications and integrate GCP Document AI & Vertex AI microservices.'
+            }
+        ];
+
+        let candidatesStore = [
+            {
+                id: 'cand_101',
+                name: 'Alex Rivera',
+                email: 'alex.rivera@example.com',
+                jobId: 'job_01',
+                jobTitle: 'Senior Cloud Solutions Architect',
+                extractedSkills: ['GCP', 'Kubernetes', 'Docker', 'Terraform', 'Python'],
+                matchScore: 94,
+                reasoning: 'Strong alignment with required GCP infrastructure skills. Extensive experience with Kubernetes clusters and Terraform provisioning.',
+                status: 'Interview Scheduled',
+                appliedAt: '2026-10-14'
+            },
+            {
+                id: 'cand_102',
+                name: 'Elena Rostova',
+                email: 'elena.r@example.com',
+                jobId: 'job_02',
+                jobTitle: 'Full Stack Engineer (GCP & Node)',
+                extractedSkills: ['Node.js', 'Express', 'JavaScript', 'HTML/CSS', 'MongoDB'],
+                matchScore: 83,
+                reasoning: 'Solid foundation in Node.js backend development. Partial overlap with Firestore; high potential for fast onboarding.',
+                status: 'Under Review',
+                appliedAt: '2026-10-15'
+            }
+        ];
+
+        // --- APP INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAll();
+        });
+
+        // Toggle UI Theme (Dark/Light)
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            const themeIcon = document.getElementById('themeIcon');
+            if (newTheme === 'light') {
+                themeIcon.className = 'ph ph-moon text-lg';
+                document.getElementById('appBody').classList.remove('bg-darkbg', 'text-slate-100');
+                document.getElementById('appBody').classList.add('bg-slate-100', 'text-slate-900');
+            } else {
+                themeIcon.className = 'ph ph-sun text-lg';
+                document.getElementById('appBody').classList.remove('bg-slate-100', 'text-slate-900');
+                document.getElementById('appBody').classList.add('bg-darkbg', 'text-slate-100');
+            }
+        }
+
+        // Switch Tab Role (Recruiter vs Candidate)
+        function switchRole(role) {
+            const recBtn = document.getElementById('navRecruiter');
+            const candBtn = document.getElementById('navCandidate');
+            const viewRecruiter = document.getElementById('viewRecruiter');
+            const viewCandidate = document.getElementById('viewCandidate');
+
+            if (role === 'recruiter') {
+                recBtn.className = "flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 bg-blue-600 text-white shadow-sm";
+                candBtn.className = "flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white";
+                viewRecruiter.classList.remove('hidden');
+                viewCandidate.classList.add('hidden');
+            } else {
+                candBtn.className = "flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 bg-blue-600 text-white shadow-sm";
+                recBtn.className = "flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white";
+                viewCandidate.classList.remove('hidden');
+                viewRecruiter.classList.add('hidden');
+            }
+        }
+
+        // Toggle Diagnostic GCP Services Grid
+        function toggleGcpDetails() {
+            const grid = document.getElementById('gcpServiceGrid');
+            const chevron = document.getElementById('gcpChevron');
+            grid.classList.toggle('hidden');
+            chevron.classList.toggle('ph-caret-up');
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function renderAll() {
+            renderRecruiterJobs();
+            renderCandidatesTable(candidatesStore);
+            renderCandidateJobGrid();
+            updateStats();
+            populateRoleFilter();
+        }
+
+        function updateStats() {
+            document.getElementById('statOpenJobs').textContent = jobsStore.length;
+            document.getElementById('statTotalApplicants').textContent = candidatesStore.length;
+            
+            if (candidatesStore.length > 0) {
+                const avg = candidatesStore.reduce((acc, c) => acc + c.matchScore, 0) / candidatesStore.length;
+                document.getElementById('statAvgScore').textContent = `${avg.toFixed(1)}%`;
+            } else {
+                document.getElementById('statAvgScore').textContent = 'N/A';
+            }
+
+            const interviews = candidatesStore.filter(c => c.status === 'Interview Scheduled').length;
+            document.getElementById('statInterviews').textContent = interviews;
+            document.getElementById('activeJobsBadge').textContent = `${jobsStore.length} Active Roles`;
+            document.getElementById('candidateOpenRolesCount').textContent = `Showing ${jobsStore.length} active roles`;
+        }
+
+        function populateRoleFilter() {
+            const select = document.getElementById('roleFilter');
+            select.innerHTML = '<option value="ALL">All Applied Roles</option>';
+            jobsStore.forEach(j => {
+                select.innerHTML += `<option value="${j.id}">${j.title}</option>`;
+            });
+        }
+
+        function renderRecruiterJobs() {
+            const container = document.getElementById('recruiterJobList');
+            container.innerHTML = '';
+
+            jobsStore.forEach(job => {
+                const skillsBadges = job.skills.map(s => `<span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 text-[10px] font-medium border border-slate-700">${s}</span>`).join(' ');
+                
+                container.innerHTML += `
+                    <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex items-start justify-between">
+                                <h3 class="font-semibold text-sm text-slate-100">${job.title}</h3>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 font-medium">${job.department}</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1 line-clamp-2">${job.description}</p>
+                        </div>
+                        <div class="space-y-2 pt-2 border-t border-slate-800/60">
+                            <div class="flex flex-wrap gap-1">${skillsBadges}</div>
+                            <div class="text-[11px] text-slate-500 flex justify-between items-center">
+                                <span><i class="ph ph-briefcase"></i> ${job.experience}</span>
+                                <span class="text-indigo-400"><i class="ph ph-database"></i> Firestore Active</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderCandidateJobGrid() {
+            const container = document.getElementById('candidateJobGrid');
+            container.innerHTML = '';
+
+            jobsStore.forEach(job => {
+                const skillsBadges = job.skills.map(s => `<span class="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 text-[10px] font-medium border border-blue-500/20">${s}</span>`).join(' ');
+                
+                container.innerHTML += `
+                    <div class="bg-slate-900/80 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between space-y-4 transition-all">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${job.department}</span>
+                                <span class="text-xs text-slate-400">${job.experience}</span>
+                            </div>
+                            <h4 class="font-bold text-base text-slate-100">${job.title}</h4>
+                            <p class="text-xs text-slate-400 line-clamp-3">${job.description}</p>
+                        </div>
+
+                        <div class="space-y-3 pt-3 border-t border-slate-800/80">
+                            <div class="flex flex-wrap gap-1">${skillsBadges}</div>
+                            <button onclick="openApplyModal('${job.id}', '${job.title}')" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md shadow-blue-600/20">
+                                <i class="ph ph-paper-plane-tilt"></i> Apply & Submit Resume
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderCandidatesTable(candidates) {
+            const tbody = document.getElementById('candidateTableBody');
+            tbody.innerHTML = '';
+
+            if (candidates.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500 text-xs">No matching candidates found in Firestore database.</td></tr>`;
+                return;
+            }
+
+            candidates.forEach(c => {
+                // Score Badge color
+                let scoreColor = 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
+                if (c.matchScore < 80) scoreColor = 'text-amber-400 bg-amber-500/10 border-amber-500/20';
+
+                // Status Badge
+                let statusBadge = 'bg-slate-800 text-slate-300';
+                if (c.status === 'Interview Scheduled') statusBadge = 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20';
+                if (c.status === 'Hired') statusBadge = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+
+                const skillsList = c.extractedSkills.slice(0, 3).map(s => `<span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px]">${s}</span>`).join(' ');
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-800/30 transition-colors">
+                        <td class="p-3">
+                            <div class="font-semibold text-slate-200">${c.name}</div>
+                            <div class="text-[10px] text-slate-500">${c.email}</div>
+                        </td>
+                        <td class="p-3">
+                            <div class="text-slate-300">${c.jobTitle}</div>
+                            <div class="text-[10px] text-slate-500"><i class="ph ph-cloud"></i> talentmatch-resumes</div>
+                        </td>
+                        <td class="p-3">
+                            <div class="flex flex-wrap gap-1">${skillsList} ${c.extractedSkills.length > 3 ? `<span class="text-[10px] text-slate-500">+${c.extractedSkills.length - 3}</span>` : ''}</div>
+                        </td>
+                        <td class="p-3">
+                            <button onclick="openMatchModal('${c.id}')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${scoreColor} hover:scale-105 transition-transform" title="Click to view Vertex AI reasoning">
+                                <i class="ph ph-sparkle"></i> ${c.matchScore}%
+                            </button>
+                        </td>
+                        <td class="p-3">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-medium ${statusBadge}">${c.status}</span>
+                        </td>
+                        <td class="p-3 text-right space-x-1">
+                            <button onclick="updateCandidateStatus('${c.id}', 'Interview Scheduled')" class="px-2 py-1 bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white rounded-lg text-[10px] font-medium transition-colors" title="Schedule Interview">
+                                Schedule
+                            </button>
+                            <button onclick="updateCandidateStatus('${c.id}', 'Hired')" class="px-2 py-1 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white rounded-lg text-[10px] font-medium transition-colors" title="Hire Candidate">
+                                Hire
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- INTERACTION HANDLERS ---
+
+        // Create New Job Form Submit
+        document.getElementById('createJobForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('jobTitle').value;
+            const department = document.getElementById('jobDept').value;
+            const experience = document.getElementById('jobExp').value;
+            const skillsStr = document.getElementById('jobSkills').value;
+            const description = document.getElementById('jobDesc').value;
+
+            const skills = skillsStr.split(',').map(s => s.trim()).filter(s => s.length > 0);
+
+            const newJob = {
+                id: `job_${Date.now()}`,
+                title,
+                department,
+                experience,
+                skills,
+                description
+            };
+
+            jobsStore.unshift(newJob);
+            document.getElementById('createJobForm').reset();
+            renderAll();
+        });
+
+        // Filter Candidates by search / dropdown
+        function filterCandidates() {
+            const searchVal = document.getElementById('candidateSearch').value.toLowerCase();
+            const roleVal = document.getElementById('roleFilter').value;
+
+            const filtered = candidatesStore.filter(c => {
+                const matchesSearch = c.name.toLowerCase().includes(searchVal) || c.email.toLowerCase().includes(searchVal) || c.extractedSkills.some(s => s.toLowerCase().includes(searchVal));
+                const matchesRole = roleVal === 'ALL' || c.jobId === roleVal;
+                return matchesSearch && matchesRole;
+            });
+
+            renderCandidatesTable(filtered);
+        }
+
+        // Modal Controls
+        function openApplyModal(jobId, jobTitle) {
+            document.getElementById('applyJobId').value = jobId;
+            document.getElementById('modalJobTitle').textContent = `Applying for: ${jobTitle}`;
+            document.getElementById('applyModal').classList.remove('hidden');
+        }
+
+        function closeApplyModal() {
+            document.getElementById('applyModal').classList.add('hidden');
+            document.getElementById('applyForm').reset();
+            document.getElementById('fileNameDisplay').textContent = "Upload triggers Document AI & Vertex AI scoring";
+        }
+
+        function updateFileName(input) {
+            if (input.files && input.files[0]) {
+                document.getElementById('fileNameDisplay').textContent = `Selected: ${input.files[0].name}`;
+            }
+        }
+
+        // Handle Application & Pipeline Simulation
+        function handleResumeSubmit(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="ph ph-spinner animate-spin"></i> Triggering Cloud Function & AI Pipeline...`;
+
+            const jobId = document.getElementById('applyJobId').value;
+            const targetJob = jobsStore.find(j => j.id === jobId) || jobsStore[0];
+            const name = document.getElementById('applicantName').value;
+            const email = document.getElementById('applicantEmail').value;
+
+            // Simulate GCP Asynchronous Pipeline (Cloud Storage -> Document AI -> Vertex AI -> Firestore)
+            setTimeout(() => {
+                // Generate Dynamic Mock AI Extracted Skills
+                const simulatedSkills = [...targetJob.skills.slice(0, 3), 'Docker', 'REST APIs', 'Git'];
+                
+                // Calculate Vertex Match Score (75% to 98%)
+                const simulatedScore = Math.floor(Math.random() * (98 - 75 + 1)) + 75;
+
+                const newCandidate = {
+                    id: `cand_${Date.now()}`,
+                    name,
+                    email,
+                    jobId: targetJob.id,
+                    jobTitle: targetJob.title,
+                    extractedSkills: simulatedSkills,
+                    matchScore: simulatedScore,
+                    reasoning: `Extracted candidate profile matches key prerequisites for ${targetJob.title}. Candidate shows proficiency in core stack (${simulatedSkills.slice(0, 3).join(', ')}). High alignment score generated by Vertex AI.`,
+                    status: 'New - Analyzed',
+                    appliedAt: new Date().toISOString().split('T')[0]
+                };
+
+                candidatesStore.unshift(newCandidate);
+                renderAll();
+
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<span>Upload & Run GCP AI Pipeline</span> <i class="ph ph-paper-plane-right"></i>`;
+                closeApplyModal();
+
+                // Switch to Recruiter Portal to showcase results
+                switchRole('recruiter');
+            }, 1200);
+        }
+
+        // Open Vertex AI Match Analysis Modal
+        function openMatchModal(candidateId) {
+            const cand = candidatesStore.find(c => c.id === candidateId);
+            if (!cand) return;
+
+            document.getElementById('modalCandidateName').textContent = `${cand.name} - ${cand.jobTitle}`;
+            document.getElementById('modalScoreValue').textContent = `${cand.matchScore}%`;
+            document.getElementById('modalReasoning').textContent = cand.reasoning;
+
+            const skillsContainer = document.getElementById('modalExtractedSkills');
+            skillsContainer.innerHTML = cand.extractedSkills.map(s => `<span class="px-2 py-1 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium">${s}</span>`).join(' ');
+
+            document.getElementById('matchDetailModal').classList.remove('hidden');
+        }
+
+        function closeMatchModal() {
+            document.getElementById('matchDetailModal').classList.add('hidden');
+        }
+
+        // Update Candidate Status in Firestore
+        function updateCandidateStatus(candidateId, newStatus) {
+            const cand = candidatesStore.find(c => c.id === candidateId);
+            if (cand) {
+                cand.status = newStatus;
+                renderAll();
+            }
+        }
+    </script>
+</body>
+</html>
