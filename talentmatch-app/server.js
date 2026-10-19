@@ -241,7 +241,7 @@ app.post('/api/upload-resume', upload.single('resume'), async (req, res) => {
 app.get('/api/candidates', async (req, res) => {
   try {
     const firestore = getFirestore();
-    const snapshot = await firestore.collection('Candidates').orderBy('appliedAt', 'desc').get();
+    const snapshot = await firestore.collection('candidates').orderBy('appliedAt', 'desc').get();
     const candidates = snapshot.docs.map(doc => doc.data());
     res.json(candidates);
   } catch (error) {
@@ -259,7 +259,7 @@ app.post('/api/candidates/:id/status', async (req, res) => {
     const { status } = req.body;
 
     const firestore = getFirestore();
-    const candidateRef = firestore.collection('Candidates').doc(id);
+    const candidateRef = firestore.collection('candidates').doc(id);
     const doc = await candidateRef.get();
 
     if (!doc.exists) {
