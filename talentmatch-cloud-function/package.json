@@ -1,0 +1,12 @@
+{
+    "name": "talentmatch-resume-processor",
+    "version": "1.0.0",
+    "description": "Cloud Function to process resumes using Document AI and Vertex AI",
+    "main": "index.js",
+    "dependencies": {
+      "@google-cloud/documentai": "^8.3.0",
+      "@google-cloud/aiplatform": "^3.14.0",
+      "@google-cloud/firestore": "^7.5.0",
+      "@google-cloud/storage": "^7.11.0"
+    }
+  }
